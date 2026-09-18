@@ -1,0 +1,25 @@
+{
+    "titolo": "Report vendite",
+    "dati": [
+        {
+            "x": "Gennaio",
+            "y": 120
+        },
+        {
+            "x": "Febbraio",
+            "y": 150
+        },
+        {
+            "x": "Marzo",
+            "y": 180
+        },
+        {
+            "x": "Aprile",
+            "y": 160
+        },
+        {
+            "x": "Maggio",
+            "y": 210
+        }
+    ]
+}

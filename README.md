@@ -1,638 +1,478 @@
-# Generazione automatica di un Report PDF con Python
+# Generatore di Report per Misurazioni Sensori
 
-## Descrizione del progetto
+Applicazione Python per l'elaborazione di misurazioni provenienti da sensori e la generazione automatica di report in formato PDF, corredati da grafici e tabelle.
 
-Questo progetto consiste nella realizzazione di uno script Python in grado di generare automaticamente un **report in formato PDF** partendo da dati contenuti in due diversi formati:
+Il progetto è stato sviluppato utilizzando **Python**, **Matplotlib** e **ReportLab**, con gestione del codice tramite **Git e GitHub**.
 
-* **JSON**
-* **CSV**
+## Descrizione
 
-Lo script legge i dati dai due file, li elabora e genera **due grafici** tramite la libreria Matplotlib. Successivamente utilizza la libreria ReportLab per creare un documento PDF contenente il titolo, la data di generazione, i grafici e una tabella con i dati provenienti dal file JSON.
+Il progetto permette di elaborare le misurazioni provenienti da due sensori e di generare automaticamente un report in formato PDF.
 
----
+Il programma legge i dati dal file:
 
-## Obiettivi
-
-Gli obiettivi principali del progetto sono:
-
-* leggere e interpretare un file JSON;
-* leggere e interpretare un file CSV;
-* estrarre i dati necessari;
-* utilizzare le **list comprehension** di Python;
-* generare grafici con Matplotlib;
-* creare un documento PDF con ReportLab;
-* inserire immagini e tabelle nel PDF;
-* aggiungere automaticamente la data e l'ora di generazione del report;
-* ottenere un report finale generato automaticamente.
-
----
-
-## Tecnologie utilizzate
-
-Il progetto è stato realizzato utilizzando:
-
-* **Python**
-* **JSON**
-* **CSV**
-* **Matplotlib**
-* **ReportLab**
-
-### Librerie Python
-
-Le librerie principali utilizzate sono:
-
-```python
-import json
-import csv
-import os
-from datetime import datetime
-import matplotlib.pyplot as plt
+```text
+sensor_measurements.json
 ```
 
-Per la generazione del PDF vengono utilizzati diversi componenti di ReportLab:
+e utilizza le informazioni contenute nel file per:
 
-```python
-from reportlab.lib.pagesizes import A4
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import (
-    SimpleDocTemplate,
-    Paragraph,
-    Spacer,
-    Image,
-    Table,
-    TableStyle
-)
+1. leggere il parametro misurato;
+2. leggere l'unità di misura;
+3. leggere l'intervallo di campionamento;
+4. leggere le misurazioni dei due sensori;
+5. filtrare le misurazioni in base al periodo selezionato;
+6. generare un grafico dell'andamento dei sensori;
+7. creare un report PDF;
+8. inserire nel PDF il grafico e una tabella delle misurazioni.
+
+---
+
+## Funzionalità
+
+### Lettura del file JSON
+
+Il programma utilizza il file:
+
+```text
+sensor_measurements.json
+```
+
+per recuperare i dati relativi alle misurazioni dei sensori.
+
+Il file contiene informazioni sul parametro misurato, sull'unità di misura, sull'intervallo di campionamento e sui valori rilevati dai sensori.
+
+### Generazione del grafico
+
+Il programma utilizza la libreria **Matplotlib** per generare un grafico contenente l'andamento delle misurazioni di:
+
+* Sensor 1
+* Sensor 2
+
+Il grafico viene salvato nel file:
+
+```text
+grafico.png
+```
+
+### Generazione del report PDF
+
+Il programma utilizza la libreria **ReportLab** per generare automaticamente il report.
+
+Il PDF contiene:
+
+* titolo del report;
+* data e ora di generazione;
+* periodo selezionato;
+* intervallo di campionamento;
+* grafico delle misurazioni;
+* tabella con i dati dei sensori.
+
+### Selezione del periodo
+
+È possibile scegliere il periodo delle misurazioni utilizzando i parametri:
+
+```text
+--data-inizio
+--data-fine
+```
+
+Il programma utilizza queste date per selezionare le misurazioni comprese nel periodo indicato.
+
+### Nome del file di output
+
+È possibile specificare il nome del file PDF generato utilizzando:
+
+```text
+--output
 ```
 
 ---
 
 ## Struttura del progetto
 
-La struttura dei file utilizzata è:
+La struttura principale del progetto è la seguente:
 
 ```text
-report_python/
+report/
 │
 ├── genera_report.py
-├── dati.json
-├── dati.csv
+├── sensor_measurements.json
+├── README.md
+├── requirements.txt
 ├── grafico.png
-├── grafico_vendite.png
 └── report.pdf
 ```
 
-### File di input
+### Descrizione dei file
 
-* `dati.json` → contiene i dati utilizzati per il primo grafico e per la tabella.
-* `dati.csv` → contiene i dati relativi alle vendite mensili utilizzati per il secondo grafico.
-
-### File generati
-
-* `grafico.png` → grafico generato a partire dai dati JSON.
-* `grafico_vendite.png` → grafico a barre generato a partire dai dati CSV.
-* `report.pdf` → documento finale generato dal programma.
+| File                       | Descrizione                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------ |
+| `genera_report.py`         | Script principale che legge i dati, filtra le misurazioni, genera il grafico e crea il PDF |
+| `sensor_measurements.json` | File JSON contenente le misurazioni dei sensori                                            |
+| `grafico.png`              | Grafico generato automaticamente dallo script                                              |
+| `report.pdf`               | Report PDF generato automaticamente dallo script                                           |
+| `requirements.txt`         | Elenco delle librerie Python necessarie                                                    |
+| `README.md`                | Documentazione del progetto                                                                |
 
 ---
 
-# 1. File JSON
+## Requisiti
 
-Il file `dati.json` contiene un titolo e una lista di dati organizzati attraverso le chiavi `x` e `y`.
+Per eseguire il progetto è necessario avere installato:
+
+* **Python 3**
+* **Matplotlib**
+* **ReportLab**
+* **Git** per la gestione del repository
+
+---
+
+## Installazione
+
+### 1. Verificare l'installazione di Python
+
+Aprire il terminale di Visual Studio Code e verificare che Python sia installato:
+
+```powershell
+python --version
+```
+
+Dovrebbe essere visualizzata la versione di Python installata.
+
+---
+
+### 2. Installare le librerie necessarie
+
+Installare Matplotlib e ReportLab utilizzando `pip`:
+
+```powershell
+pip install matplotlib reportlab
+```
+
+È possibile verificare l'installazione con:
+
+```powershell
+pip show matplotlib
+```
+
+e:
+
+```powershell
+pip show reportlab
+```
+
+---
+
+## Utilizzo
+
+Per eseguire il programma bisogna aprire il terminale di Visual Studio Code nella cartella del progetto.
+
+### Esecuzione senza parametri
+
+Il programma può essere eseguito semplicemente con:
+
+```powershell
+python genera_report.py
+```
+
+In questo caso verrà utilizzato il file:
+
+```text
+sensor_measurements.json
+```
+
+e il report verrà generato con il nome predefinito:
+
+```text
+report.pdf
+```
+
+---
+
+### Esecuzione con selezione del periodo
+
+È possibile specificare una data iniziale e una data finale.
 
 Esempio:
 
+```powershell
+python genera_report.py --data-inizio 2026-09-01 --data-fine 2026-09-18
+```
+
+Il programma considererà solamente le misurazioni comprese nel periodo indicato.
+
+---
+
+### Esecuzione con nome personalizzato del PDF
+
+È possibile scegliere il nome del file PDF utilizzando `--output`.
+
+Esempio:
+
+```powershell
+python genera_report.py --output report_settembre.pdf
+```
+
+In questo caso il report verrà salvato come:
+
+```text
+report_settembre.pdf
+```
+
+---
+
+### Esecuzione completa
+
+È possibile utilizzare contemporaneamente tutti i parametri:
+
+```powershell
+python genera_report.py --data-inizio 2026-09-01 --data-fine 2026-09-18 --output report_settembre.pdf
+```
+
+In questo esempio:
+
+* la data iniziale è `2026-09-01`;
+* la data finale è `2026-09-18`;
+* il file PDF viene salvato come `report_settembre.pdf`.
+
+---
+
+## Parametri da riga di comando
+
+Lo script supporta i seguenti parametri:
+
+| Parametro       | Descrizione                              | Esempio                    |
+| --------------- | ---------------------------------------- | -------------------------- |
+| `--data-inizio` | Data iniziale del periodo da considerare | `--data-inizio 2026-09-01` |
+| `--data-fine`   | Data finale del periodo da considerare   | `--data-fine 2026-09-18`   |
+| `--output`      | Nome del file PDF da generare            | `--output report.pdf`      |
+
+### Formato delle date
+
+Le date devono essere inserite nel formato:
+
+```text
+YYYY-MM-DD
+```
+
+Ad esempio:
+
+```text
+2026-09-01
+```
+
+Il programma controlla inoltre che la data iniziale non sia successiva alla data finale.
+
+---
+
+## File JSON
+
+Il file `sensor_measurements.json` contiene i dati utilizzati dallo script.
+
+La struttura del file è basata sulle seguenti informazioni:
+
 ```json
 {
-    "titolo": "Report vendite",
-    "dati": [
+    "parameter": "temperature",
+    "unit": "°C",
+    "sampling_interval_minutes": 10,
+    "measurements": [
         {
-            "x": "Gennaio",
-            "y": 120
-        },
-        {
-            "x": "Febbraio",
-            "y": 150
-        },
-        {
-            "x": "Marzo",
-            "y": 180
-        },
-        {
-            "x": "Aprile",
-            "y": 160
-        },
-        {
-            "x": "Maggio",
-            "y": 210
+            "timestamp": "2026-09-01T10:00:00Z",
+            "sensor_1": 24.5,
+            "sensor_2": 25.1
         }
     ]
 }
 ```
 
-Il programma apre il file:
+### Campi principali
 
-```python
-with open("dati.json", "r", encoding="utf-8") as file:
-    dati_json = json.load(file)
-```
+| Campo                       | Descrizione                                    |
+| --------------------------- | ---------------------------------------------- |
+| `parameter`                 | Indica il parametro misurato                   |
+| `unit`                      | Indica l'unità di misura                       |
+| `sampling_interval_minutes` | Indica l'intervallo di campionamento in minuti |
+| `measurements`              | Contiene l'elenco delle misurazioni            |
 
-La funzione `json.load()` converte il contenuto del file JSON in un **oggetto Python**, in questo caso un dizionario.
+Ogni elemento della lista `measurements` contiene:
 
-Successivamente vengono estratti:
-
-```python
-titolo = dati_json["titolo"]
-dati = dati_json["dati"]
-```
-
-La variabile `titolo` contiene il titolo del report, mentre `dati` contiene la lista dei dati.
-
----
-
-# 2. File CSV
-
-Il file `dati.csv` contiene i dati relativi alle vendite mensili.
-
-Esempio:
-
-```csv
-mese,vendite
-Gennaio,120
-Febbraio,150
-Marzo,180
-Aprile,160
-Maggio,210
-```
-
-Il programma utilizza `csv.DictReader` per leggere il file:
-
-```python
-with open("dati.csv", "r", encoding="utf-8") as file:
-    lettore = csv.DictReader(file)
-
-    for riga in lettore:
-        mesi.append(riga["mese"])
-        vendite.append(int(riga["vendite"]))
-```
-
-Vengono create due liste:
-
-```python
-mesi = []
-vendite = []
-```
-
-La lista `mesi` contiene i mesi, mentre la lista `vendite` contiene i relativi valori numerici.
-
-Il valore delle vendite viene convertito da stringa a intero attraverso:
-
-```python
-int(riga["vendite"])
-```
+| Campo       | Descrizione                         |
+| ----------- | ----------------------------------- |
+| `timestamp` | Data e ora della misurazione        |
+| `sensor_1`  | Valore rilevato dal primo sensore   |
+| `sensor_2`  | Valore rilevato dal secondo sensore |
 
 ---
 
-# 3. Creazione del grafico CSV
+## Output
 
-I dati provenienti dal CSV vengono utilizzati per creare un **grafico a barre**.
+L'esecuzione dello script produce diversi risultati.
 
-Per prima cosa viene creata una nuova figura:
+### Grafico
 
-```python
-plt.figure(figsize=(8, 5))
-```
-
-Successivamente viene utilizzata:
-
-```python
-plt.bar(
-    mesi,
-    vendite
-)
-```
-
-La funzione `plt.bar()` crea un diagramma a barre verticali.
-
-Vengono poi aggiunti:
-
-```python
-plt.title("Vendite mensili")
-plt.xlabel("Mese")
-plt.ylabel("Vendite")
-```
-
-Questi comandi impostano:
-
-* titolo del grafico;
-* etichetta dell'asse X;
-* etichetta dell'asse Y.
-
-Infine il grafico viene salvato:
-
-```python
-grafico_csv = "grafico_vendite.png"
-
-plt.savefig(
-    grafico_csv,
-    dpi=150
-)
-```
-
-Il risultato è il file:
-
-```text
-grafico_vendite.png
-```
-
----
-
-# 4. Estrazione dei dati X e Y dal JSON
-
-I dati presenti nel JSON vengono utilizzati per creare due liste separate:
-
-```python
-x = [elemento["x"] for elemento in dati]     
-y = [elemento["y"] for elemento in dati]     
-```           
-Questa tecnica viene chiamata **list comprehension**.                               
-
-Può anche essere scritta in questo modo in maniera piu esplicita -->
---------------------------------------------------
-x = []
-y = []
-
-for elemento in dati:
-    x.append(elemento["x"])
-    y.append(elemento["y"])
----------------------------------------------------
-
-
-Python scorre ogni elemento presente nella lista `dati` e recupera:
-
-* il valore della chiave `x` → lista `x`;
-* il valore della chiave `y` → lista `y`.
-
-Ad esempio:
-
-```text
-x = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio"]
-
-y = [120, 150, 180, 160, 210]
-```
-
-Queste liste vengono successivamente utilizzate per creare il grafico.
-
----
-
-# 5. Creazione del grafico JSON
-
-Per i dati JSON viene creato un **grafico a linee**:
-
-```python
-plt.figure(figsize=(10, 5))
-
-plt.plot(
-    x,
-    y,
-    marker="o"
-)
-```
-
-La funzione `plt.plot()` utilizza le liste `x` e `y` come coordinate del grafico.
-
-L'opzione:
-
-```python
-marker="o"
-```
-
-permette di visualizzare un punto in corrispondenza dei valori.
-
-Vengono inoltre aggiunti:
-
-```python
-plt.title(titolo)
-plt.xlabel("X")
-plt.ylabel("Y")
-plt.grid(True)
-```
-
-Il grafico viene quindi salvato nel file:
+Il grafico viene salvato nel file:
 
 ```text
 grafico.png
 ```
 
----
+Il grafico rappresenta l'andamento dei valori rilevati da Sensor 1 e Sensor 2 nel periodo selezionato.
 
-# 6. Creazione del PDF
+### Report PDF
 
-Il documento PDF viene creato utilizzando ReportLab.
+Il report viene salvato nel file specificato tramite il parametro `--output`.
 
-Il percorso del file viene definito con:
-
-```python
-pdf_path = "report.pdf"
-```
-
-Successivamente viene creato il documento: -->(viene creato un oggetto Python grazie alla classe SimpleDocTemplate che crea appunto un pdf)
-
-```python
-documento = SimpleDocTemplate(
-    pdf_path,
-    pagesize=A4
-)
-```
-
-Il formato della pagina viene impostato su **A4**.
-
----
-
-# 7. Preparazione del contenuto
-
-Per gestire gli stili del documento viene utilizzato:
-
-```python
-styles = getSampleStyleSheet()
-```
-
-Viene inoltre creata una lista vuota:
-
-```python
-contenuto = []
-```
-
-Questa lista contiene tutti gli elementi che verranno inseriti nel PDF.
-
----
-
-# 8. Inserimento del titolo
-
-Il titolo proveniente dal file JSON viene inserito nel PDF:
-
-```python
-contenuto.append(
-    Paragraph(
-        titolo,
-        styles["Title"]
-    )
-)
-```
-
-In questo modo il PDF utilizza automaticamente il valore presente nella chiave `titolo` del JSON.
-
----
-
-# 9. Inserimento della data di generazione
-
-Il programma recupera automaticamente la data e l'ora correnti:
-
-```python
-data_generazione = datetime.now().strftime(
-    "%d/%m/%Y %H:%M"
-)
-```
-
-La data viene successivamente inserita nel documento:
-
-```python
-contenuto.append(
-    Paragraph(
-        f"Report generato il: {data_generazione}",
-        styles["Normal"]
-    )
-)
-```
-
-In questo modo ogni report mostra il momento in cui è stato generato.
-
----
-
-# 10. Inserimento del grafico JSON nel PDF
-
-Il grafico creato da Matplotlib viene caricato come immagine:
-
-```python
-immagine = Image(
-    grafico_path,
-    width=500,
-    height=250
-)
-```
-
-L'immagine viene poi aggiunta al contenuto del PDF:
-
-```python
-contenuto.append(immagine)
-```
-
----
-
-# 11. Inserimento del grafico CSV nel PDF
-
-Anche il grafico delle vendite mensili viene inserito nel documento:
-
-```python
-immagine_csv = Image(
-    grafico_csv,
-    width=500,
-    height=250
-)
-
-contenuto.append(immagine_csv)
-```
-
-Il PDF contiene quindi **due grafici**:
-
-1. grafico dei dati JSON;
-2. grafico delle vendite mensili provenienti dal CSV.
-
----
-
-# 12. Creazione della tabella JSON
-
-Il programma crea una tabella utilizzando i dati presenti nel JSON.
-
-La prima riga contiene le intestazioni:
-
-```python
-tabella_dati = [["X", "Y"]]
-```
-
-Successivamente viene utilizzato un ciclo `for`:
-
-```python
-for elemento in dati:
-    tabella_dati.append([
-        elemento["x"],
-        elemento["y"]
-    ])
-```
-
-In questo modo vengono aggiunti alla tabella tutti i valori `x` e `y`.
-
----
-
-# 13. Formattazione della tabella
-
-La tabella viene creata con:
-
-```python
-tabella = Table(tabella_dati)
-```
-
-Successivamente viene applicato uno stile:
-
-```python
-tabella.setStyle(
-    TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
-        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-        ("GRID", (0, 0), (-1, -1), 1, colors.black),
-        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-        ("PADDING", (0, 0), (-1, -1), 6)
-    ])
-)
-```
-
-La formattazione permette di:
-
-* colorare lo sfondo dell'intestazione;
-* impostare il colore del testo dell'intestazione;
-* creare i bordi della tabella;
-* centrare il contenuto;
-* aggiungere spazio interno alle celle.
-
----
-
-# 14. Generazione del PDF
-
-Dopo aver inserito tutti gli elementi, il documento viene generato con:
-
-```python
-documento.build(contenuto)
-```
-
-Il file finale viene salvato come:
+Se non viene specificato alcun nome, viene utilizzato:
 
 ```text
 report.pdf
 ```
 
-Infine il programma mostra nel terminale:
-
-```python
-print(f"Report creato: {pdf_path}")
-```
+Il PDF contiene il grafico e una tabella con le misurazioni relative al periodo selezionato.
 
 ---
 
-# Flusso completo del progetto
+## Branch Git
 
-Il funzionamento generale può essere rappresentato nel seguente modo:
+Per lo sviluppo del progetto sono stati utilizzati due branch separati, in modo da sviluppare le funzionalità richieste separatamente.
+
+### `feature/json-input`
+
+Questo branch è stato utilizzato per la funzionalità relativa al nuovo file JSON.
+
+Il programma è stato modificato per utilizzare:
 
 ```text
-                  DATI
-                   │
-          ┌────────┴────────┐
-          │                 │
-          ▼                 ▼
-      dati.json          dati.csv
-          │                 │
-          ▼                 ▼
-    Lettura JSON       Lettura CSV
-          │                 │
-          ▼                 ▼
-      Dati X/Y       Mesi e vendite
-          │                 │
-          ▼                 ▼
-      Grafico a          Grafico a
-        linee              barre
-          │                 │
-          └────────┬────────┘
-                   ▼
-              ReportLab
-                   │
-          ┌────────┼────────┐
-          │        │        │
-          ▼        ▼        ▼
-       Titolo   Grafici   Tabella
-          │        │        │
-          └────────┼────────┘
-                   ▼
-              report.pdf
+sensor_measurements.json
 ```
+
+come file contenente le misurazioni dei sensori.
 
 ---
 
-# Installazione
+### `feature/parameters-config`
 
-Per eseguire il progetto è necessario avere Python installato.
+Questo branch è stato utilizzato per aggiungere la gestione dei parametri da riga di comando.
 
-Dal terminale, nella cartella del progetto, installare le librerie necessarie:
-
-```bash
-pip install matplotlib reportlab
-```
-
-I moduli `json`, `csv`, `os` e `datetime` fanno parte della libreria standard di Python e non richiedono installazioni aggiuntive.
-
----
-
-# Esecuzione
-
-Per eseguire il programma:
-
-```bash
-python genera_report.py
-```
-
-Se l'esecuzione termina correttamente, nel terminale verrà visualizzato:
+Sono stati aggiunti:
 
 ```text
-Report creato: report.pdf
+--data-inizio
+--data-fine
+--output
 ```
 
-Nella cartella del progetto saranno presenti il PDF e i grafici generati.
+Questi parametri permettono di:
+
+* selezionare il periodo delle misurazioni;
+* scegliere il nome del file PDF generato.
 
 ---
 
-# Output finale
+## Comandi Git utilizzati
 
-Il programma produce:
+### Inizializzazione del repository
 
-```text
-grafico.png
+```powershell
+git init
 ```
 
-Grafico a linee creato utilizzando i dati del JSON.
+### Verifica dello stato del repository
 
-```text
-grafico_vendite.png
+```powershell
+git status
 ```
 
-Grafico a barre creato utilizzando i dati del CSV.
+### Aggiunta dei file
 
-```text
-report.pdf
+Per aggiungere un file specifico:
+
+```powershell
+git add genera_report.py
 ```
 
-Report finale contenente:
+Per aggiungere più file:
 
-* titolo;
-* data e ora di generazione;
-* grafico dei dati JSON;
-* grafico delle vendite CSV;
-* tabella dei dati JSON.
+```powershell
+git add grafico.png report.pdf
+```
+
+### Creazione del commit
+
+```powershell
+git commit -m "Messaggio del commit"
+```
+
+### Collegamento al repository GitHub
+
+```powershell
+git remote add origin https://github.com/GiuseppeDelPrete/report
+```
+
+### Verifica del repository remoto
+
+```powershell
+git remote -v
+```
+
+### Creazione del branch JSON
+
+```powershell
+git checkout -b feature/json-input
+```
+
+### Creazione del branch dei parametri
+
+```powershell
+git checkout -b feature/parameters-config
+```
+
+### Visualizzazione dei branch
+
+```powershell
+git branch
+```
+
+### Passaggio a un branch
+
+Per passare al branch JSON:
+
+```powershell
+git checkout feature/json-input
+```
+
+Per passare al branch dei parametri:
+
+```powershell
+git checkout feature/parameters-config
+```
+
+### Caricamento delle modifiche su GitHub
+
+```powershell
+git push
+```
+
+Per il primo caricamento di un nuovo branch può essere utilizzato:
+
+```powershell
+git push -u origin feature/parameters-config
+```
 
 ---
 
-# Conclusione
+## Tecnologie utilizzate
 
-Il progetto dimostra come Python possa essere utilizzato per **leggere, elaborare e rappresentare dati provenienti da formati differenti**, come JSON e CSV.
+Il progetto utilizza le seguenti tecnologie:
 
-I dati vengono trasformati in grafici tramite **Matplotlib** e successivamente raccolti all'interno di un unico documento PDF tramite **ReportLab**.
-
-Il risultato è un processo automatizzato che permette di passare dai dati di input al report finale attraverso un unico script Python.
+* **Python** — linguaggio di programmazione utilizzato per lo sviluppo dello script;
+* **JSON** — formato utilizzato per memorizzare le misurazioni;
+* **Matplotlib** — libreria utilizzata per la generazione dei grafici;
+* **ReportLab** — libreria utilizzata per la generazione dei documenti PDF;
+* **Git** — sistema di controllo versione;
+* **GitHub** — piattaforma utilizzata per il repository remoto.
 
 ---
+
+

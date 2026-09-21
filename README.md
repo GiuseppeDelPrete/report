@@ -475,4 +475,36 @@ Il progetto utilizza le seguenti tecnologie:
 
 ---
 
+*** Branch - multi-sensori-grafici ***
+Obiettivi del branch
 
+1. Supporto a più di due sensori
+***Permettere al programma di acquisire e gestire le misurazioni di un numero variabile di sensori***
+
+2. Grafici individuali e confronto finale
+***Generare un grafico per ogni sensore e mantenere il grafico di confronto già esistente alla fine del report***
+
+--- 
+###
+1. **I sensori vengono individuati automaticamente analizzando le chiavi presenti nella prima misurazione**
+
+`timestamps = [
+    mis["timestamp"]
+    for mis in misurazioni_filtrate
+]
+
+sensori = sorted(
+    key
+    for key in misurazioni_filtrate[0]
+    if key.startswith("sensor_")
+)`
+
+Il programma considera come sensori tutte le chiavi che iniziano con
+`sensor_` o comunque si può adattare 
+
+## Creazione dei grafici singoli
+2. Per ogni sensore rilevato viene creato automaticamente un grafico
+individuale.
+Il programma utilizza un ciclo `for` per evitare di dover scrivere
+manualmente il codice per ogni sensore.
+Per ogni sensore viene generato un file PNG separato

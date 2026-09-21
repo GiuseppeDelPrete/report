@@ -158,78 +158,80 @@ titolo = (
 )
 
 
-# 6) ESTRAZIONE DEI DATI FILTRATI
+# 6) ESTRAZIONE DINAMICA DEI SENSORI
 
 timestamps = [
-    m["timestamp"]
-    for m in misurazioni_filtrate
+    mis["timestamp"]
+    for mis in misurazioni_filtrate
 ]
 
-sensor_1_valori = [
-    m["sensor_1"]
-    for m in misurazioni_filtrate
-]
+sensori = sorted(
+    key
+    for key in misurazioni_filtrate[0]
+    if key.startswith("sensor_")
+)
+# Individua automaticamente tutte le chiavi che iniziano con "sensor_"
 
-sensor_2_valori = [
-    m["sensor_2"]
-    for m in misurazioni_filtrate
-]
+print(f"Sensori rilevati: {sensori}")
 
 
 # 7) CREAZIONE DEL GRAFICO
 
-plt.figure(
-    figsize=(10, 5)
-)
+grafici_singoli = []
 
-plt.plot(
-    timestamps,
-    sensor_1_valori,
-    marker="o",
-    label="Sensor 1"
-)
+for sensore in sensori:
 
-plt.plot(
-    timestamps,
-    sensor_2_valori,
-    marker="s",
-    label="Sensor 2"
-)
+    valori = [
+        mis[sensore]
+        for mis in misurazioni_filtrate
+    ]
 
-plt.title(
-    f"Andamento {parametro} ({unita})"
-)
+    plt.figure(
+        figsize=(10, 5)
+    )
 
-plt.xlabel(
-    "Timestamp"
-)
+    plt.plot(
+        timestamps,
+        valori,
+        marker="o",
+        label=sensore
+    )
 
-plt.ylabel(
-    f"Valore ({unita})"
-)
+    plt.title(
+        f"Andamento {parametro} - {sensore}"
+    )
 
-plt.xticks(
-    rotation=45,
-    ha="right"
-)
+    plt.xlabel(
+        "Timestamp"
+    )
 
-plt.grid(True)
+    plt.ylabel(
+        f"Valore ({unita})"
+    )
 
-plt.legend()
+    plt.xticks(
+        rotation=45,
+        ha="right"
+    )
 
-plt.tight_layout()
+    plt.grid(True)
 
+    plt.legend()
 
-grafico_path = "grafico.png"
+    plt.tight_layout()
 
+    grafico_path = f"grafico_{sensore}.png"
 
-plt.savefig(
-    grafico_path,
-    dpi=150
-)
+    plt.savefig(
+        grafico_path,
+        dpi=150
+    )
 
-plt.close()
+    plt.close()
 
+    grafici_singoli.append(
+        grafico_path
+    )
 
 # 8) CREAZIONE DEL PDF
 

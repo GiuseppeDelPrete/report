@@ -233,6 +233,58 @@ for sensore in sensori:
         grafico_path
     )
 
+# 7.2) CREAZIONE DEL GRAFICO DI CONFRONTO
+
+plt.figure(
+    figsize=(10, 5)
+)
+
+for sensore in sensori:
+
+    valori = [
+        mis[sensore]
+        for mis in misurazioni_filtrate
+    ]
+
+    plt.plot(
+        timestamps,
+        valori,
+        marker="o",
+        label=sensore
+    )
+
+plt.title(
+    f"Confronto {parametro} ({unita})"
+)
+
+plt.xlabel(
+    "Timestamp"
+)
+
+plt.ylabel(
+    f"Valore ({unita})"
+)
+
+plt.xticks(
+    rotation=45,
+    ha="right"
+)
+
+plt.grid(True)
+
+plt.legend()
+
+plt.tight_layout()
+
+grafico_confronto_path = "grafico_confronto.png"
+
+plt.savefig(
+    grafico_confronto_path,
+    dpi=150
+)
+
+plt.close()
+
 # 8) CREAZIONE DEL PDF
 
 pdf_path = args.output
@@ -354,28 +406,61 @@ for sensore, grafico_path in zip(sensori, grafici_singoli):
         )
     )
 
+contenuto.append(
+    Paragraph(
+        "Grafico di confronto",
+        styles["Heading3"]
+    )
+)
 
+contenuto.append(
+    Spacer(
+        1,
+        5
+    )
+)
+
+immagine_confronto = Image(
+    grafico_confronto_path,
+    width=500,
+    height=250
+)
+
+contenuto.append(
+    immagine_confronto
+)
+
+contenuto.append(
+    Spacer(
+        1,
+        20
+    )
+)
 # 12) CREAZIONE DELLA TABELLA
 
 tabella_dati = [
     [
         "Timestamp",
-        "Sensor 1",
-        "Sensor 2"
+        *sensori
     ]
 ]
 
 
-for m in misurazioni_filtrate:
+for mis in misurazioni_filtrate:
+
+    riga = [
+        mis["timestamp"]
+    ]
+
+    for sensore in sensori:
+
+        riga.append(
+            str(mis[sensore])
+        )
 
     tabella_dati.append(
-        [
-            m["timestamp"],
-            str(m["sensor_1"]),
-            str(m["sensor_2"])
-        ]
+        riga
     )
-
 
 tabella = Table(
     tabella_dati

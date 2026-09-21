@@ -475,4 +475,142 @@ Il progetto utilizza le seguenti tecnologie:
 
 ---
 
+*** Branch - multi-sensori-grafici ***
+Obiettivi del branch
 
+1. Supporto a più di due sensori
+***Permettere al programma di acquisire e gestire le misurazioni di un numero variabile di sensori***
+
+2. Grafici individuali e confronto finale
+***Generare un grafico per ogni sensore e mantenere il grafico di confronto già esistente alla fine del report***
+
+--- 
+###
+## Rilevamento dei sensori
+
+I sensori vengono individuati automaticamente analizzando le chiavi presenti nella prima misurazione.
+
+```python
+timestamps = [
+    mis["timestamp"]
+    for mis in misurazioni_filtrate
+]
+
+sensori = sorted(
+    key
+    for key in misurazioni_filtrate[0]
+    if key.startswith("sensor_")
+)
+```
+
+Il programma considera come sensori tutte le chiavi che iniziano con `sensor_`.
+In questo modo non è necessario specificare manualmente nel codice quali sensori utilizzare.
+Ad esempio, aggiungendo `sensor_3` ai dati, il programma lo rileva automaticamente.
+
+---
+
+## Creazione dei grafici singoli
+
+Per ogni sensore rilevato viene creato automaticamente un grafico individuale.
+
+Il programma utilizza un ciclo `for` per evitare di dover scrivere manualmente il codice per ogni sensore.
+
+```
+for sensore in sensori:
+    valori = [
+        mis[sensore]
+        for mis in misurazioni_filtrate
+    ]
+    ...
+```
+
+Per ogni sensore viene generato un file PNG separato:
+```
+grafico_sensor_1.png
+grafico_sensor_2.png
+grafico_sensor_3.png
+```
+
+Il numero di grafici generati dipende quindi dal numero di sensori presenti nei dati.
+
+---
+
+## Grafico di confronto
+
+Oltre ai grafici individuali, il programma genera un grafico contenente tutti i sensori.
+
+```
+plt.figure(
+    figsize=(10, 5)
+)
+for sensore in sensori:
+    valori = [
+        mis[sensore]
+        for mis in misurazioni_filtrate
+    ]
+    plt.plot(
+        timestamps,
+        valori,
+        marker="o",
+        label=sensore
+    )
+```
+
+Ogni sensore viene aggiunto al grafico tramite il ciclo `for`.
+
+Il risultato viene salvato nel file:
+`grafico_confronto.png`
+
+In questo modo è possibile confrontare l'andamento di tutti i sensori all'interno dello stesso grafico.
+
+---
+
+## Inserimento dei grafici nel PDF
+
+I grafici individuali vengono inseriti automaticamente nel documento PDF utilizzando la lista `grafici_singoli`.
+
+I nomi dei sensori e i relativi file grafici vengono associati tramite `zip()`:
+
+`for sensore, grafico_path in zip(sensori, grafici_singoli):    ...`
+
+In questo modo il PDF può contenere un numero variabile di grafici, in base al numero di sensori rilevati.
+
+Ogni grafico viene inserito con il nome del sensore come titolo.
+
+Anche il grafico di confronto viene inserito automaticamente nel PDF utilizzando il percorso contenuto nella variabile `grafico_confronto_path`.
+
+---
+
+## Tabella dinamica
+
+Anche la tabella del PDF è stata resa dinamica.
+L'intestazione viene costruita utilizzando direttamente la lista dei sensori:
+```
+tabella_dati = [
+    [
+        "Timestamp",
+        *sensori
+    ]
+]
+```
+Successivamente, per ogni misurazione, viene creata una riga contenente il timestamp e i valori di tutti i sensori:
+```
+for mis in misurazioni_filtrate:
+    riga = [
+        mis["timestamp"]
+    ]
+    for sensore in sensori:
+        riga.append(
+            str(mis[sensore])
+        )
+    tabella_dati.append(
+        riga
+    )
+```
+In questo modo la tabella si adatta automaticamente al numero di sensori presenti nei dati.
+
+Ad esempio, con tre sensori viene generata una tabella con:
+
+`Timestamp | sensor_1 | sensor_2 | sensor_3 `
+
+Non è necessario modificare manualmente il codice ogni volta che viene aggiunto un nuovo sensore

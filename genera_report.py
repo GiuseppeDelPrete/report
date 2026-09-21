@@ -165,46 +165,103 @@ titolo = (
 )
 
 
-# 6) ESTRAZIONE DEI DATI FILTRATI
+# 6) ESTRAZIONE DINAMICA DEI SENSORI
 
 timestamps = [
-    m["timestamp"]
-    for m in misurazioni_filtrate
+    mis["timestamp"]
+    for mis in misurazioni_filtrate
 ]
 
-sensor_1_valori = [
-    m["sensor_1"]
-    for m in misurazioni_filtrate
-]
+sensori = sorted(
+    key
+    for key in misurazioni_filtrate[0]
+    if key.startswith("sensor_")
+)
+# Individua automaticamente tutte le chiavi che iniziano con "sensor_"
 
-sensor_2_valori = [
-    m["sensor_2"]
-    for m in misurazioni_filtrate
-]
+print(f"Sensori rilevati: {sensori}")
 
 
 # 7) CREAZIONE DEL GRAFICO
+
+grafici_singoli = []
+
+for sensore in sensori:
+
+    valori = [
+        mis[sensore]
+        for mis in misurazioni_filtrate
+    ]
+
+    plt.figure(
+        figsize=(10, 5)
+    )
+
+    plt.plot(
+        timestamps,
+        valori,
+        marker="o",
+        label=sensore
+    )
+
+    plt.title(
+        f"Andamento {parametro} - {sensore}"
+    )
+
+    plt.xlabel(
+        "Timestamp"
+    )
+
+    plt.ylabel(
+        f"Valore ({unita})"
+    )
+
+    plt.xticks(
+        rotation=45,
+        ha="right"
+    )
+
+    plt.grid(True)
+
+    plt.legend()
+
+    plt.tight_layout()
+
+    grafico_path = f"grafico_{sensore}.png"
+
+    plt.savefig(
+        grafico_path,
+        dpi=150
+    )
+
+    plt.close()
+
+    grafici_singoli.append(
+        grafico_path
+    )
+
+# 7.2) CREAZIONE DEL GRAFICO DI CONFRONTO
 
 plt.figure(
     figsize=(10, 5)
 )
 
-plt.plot(
-    timestamps,
-    sensor_1_valori,
-    marker="o",
-    label="Sensor 1"
-)
+for sensore in sensori:
 
-plt.plot(
-    timestamps,
-    sensor_2_valori,
-    marker="s",
-    label="Sensor 2"
-)
+    valori = [
+        mis[sensore]
+        for mis in misurazioni_filtrate
+    ]
+
+    plt.plot(
+        timestamps,
+        valori,
+        marker="o",
+        label=sensore
+    )
 
 plt.title(
-    f"Andamento {parametro} ({unita})"
+    f"Confronto {parametro} ({unita})"
 )
 
 plt.xlabel(
@@ -226,17 +283,14 @@ plt.legend()
 
 plt.tight_layout()
 
-
-grafico_path = "grafico.png"
-
+grafico_confronto_path = "grafico_confronto.png"
 
 plt.savefig(
-    grafico_path,
+    grafico_confronto_path,
     dpi=150
 )
 
 plt.close()
-
 
 # 8) CREAZIONE DEL PDF
 
@@ -312,11 +366,10 @@ contenuto.append(
 
 contenuto.append(
     Paragraph(
-        "Grafico Misurazioni Sensori",
+        "Grafici dei sensori",
         styles["Heading2"]
     )
 )
-
 
 contenuto.append(
     Spacer(
@@ -325,18 +378,64 @@ contenuto.append(
     )
 )
 
+for sensore, grafico_path in zip(sensori, grafici_singoli):
 
-immagine = Image(
-    grafico_path,
+    contenuto.append(
+        Paragraph(
+            f"{sensore}",
+            styles["Heading3"]
+        )
+    )
+
+    contenuto.append(
+        Spacer(
+            1,
+            5
+        )
+    )
+ 
+    immagine = Image(
+        grafico_path,
+        width=500,
+        height=250
+    )
+
+
+    contenuto.append(
+        immagine
+    )
+
+
+    contenuto.append(
+        Spacer(
+            1,
+            20
+        )
+    )
+
+contenuto.append(
+    Paragraph(
+        "Grafico di confronto",
+        styles["Heading3"]
+    )
+)
+
+contenuto.append(
+    Spacer(
+        1,
+        5
+    )
+)
+
+immagine_confronto = Image(
+    grafico_confronto_path,
     width=500,
     height=250
 )
 
-
 contenuto.append(
-    immagine
+    immagine_confronto
 )
-
 
 contenuto.append(
     Spacer(
@@ -344,29 +443,31 @@ contenuto.append(
         20
     )
 )
-
-
 # 12) CREAZIONE DELLA TABELLA
 
 tabella_dati = [
     [
         "Timestamp",
-        "Sensor 1",
-        "Sensor 2"
+        *sensori
     ]
 ]
 
 
-for m in misurazioni_filtrate:
+for mis in misurazioni_filtrate:
+
+    riga = [
+        mis["timestamp"]
+    ]
+
+    for sensore in sensori:
+
+        riga.append(
+            str(mis[sensore])
+        )
 
     tabella_dati.append(
-        [
-            m["timestamp"],
-            str(m["sensor_1"]),
-            str(m["sensor_2"])
-        ]
+        riga
     )
-
 
 tabella = Table(
     tabella_dati

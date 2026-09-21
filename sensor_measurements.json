@@ -6,62 +6,74 @@
     {
       "timestamp": "2026-09-18T08:00:00",
       "sensor_1": 21.8,
-      "sensor_2": 20.9
+      "sensor_2": 20.9,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T08:10:00",
       "sensor_1": 22.0,
-      "sensor_2": 21.1
+      "sensor_2": 21.1,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T08:20:00",
       "sensor_1": 22.3,
-      "sensor_2": 21.4
+      "sensor_2": 21.4,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T08:30:00",
       "sensor_1": 22.7,
-      "sensor_2": 21.8
+      "sensor_2": 21.8,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T08:40:00",
       "sensor_1": 23.1,
-      "sensor_2": 22.0
+      "sensor_2": 22.0,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T08:50:00",
       "sensor_1": 23.4,
-      "sensor_2": 22.3
+      "sensor_2": 22.3,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T09:00:00",
       "sensor_1": 23.2,
-      "sensor_2": 22.5
+      "sensor_2": 22.5,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T09:10:00",
       "sensor_1": 22.9,
-      "sensor_2": 22.4
+      "sensor_2": 22.4,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T09:20:00",
       "sensor_1": 22.6,
-      "sensor_2": 22.2
+      "sensor_2": 22.2,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T09:30:00",
       "sensor_1": 22.4,
-      "sensor_2": 22.0
+      "sensor_2": 22.0,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T09:40:00",
       "sensor_1": 22.1,
-      "sensor_2": 21.7
+      "sensor_2": 21.7,
+      "sensor_3": 25.1
     },
     {
       "timestamp": "2026-09-18T09:50:00",
       "sensor_1": 21.9,
-      "sensor_2": 21.5
+      "sensor_2": 21.5,
+      "sensor_3": 25.1
     }
   ]
 }

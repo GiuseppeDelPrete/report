@@ -508,3 +508,17 @@ individuale.
 Il programma utilizza un ciclo `for` per evitare di dover scrivere
 manualmente il codice per ogni sensore.
 Per ogni sensore viene generato un file PNG separato
+
+## Inserimento dei grafici nel PDF
+
+I grafici individuali vengono inseriti automaticamente nel documento
+PDF utilizzando la lista `grafici_singoli`.
+
+I nomi dei sensori e i relativi file grafici vengono associati tramite
+`zip()`:
+
+` for sensore, grafico_path in zip(sensori, grafici_singoli): ... `
+
+In questo modo il PDF può contenere un numero variabile di grafici,
+in base al numero di sensori rilevati.
+Ogni grafico viene inserito con il nome del sensore come titolo.

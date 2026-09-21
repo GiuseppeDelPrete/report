@@ -307,11 +307,10 @@ contenuto.append(
 
 contenuto.append(
     Paragraph(
-        "Grafico Misurazioni Sensori",
+        "Grafici dei sensori",
         styles["Heading2"]
     )
 )
-
 
 contenuto.append(
     Spacer(
@@ -320,25 +319,40 @@ contenuto.append(
     )
 )
 
+for sensore, grafico_path in zip(sensori, grafici_singoli):
 
-immagine = Image(
-    grafico_path,
-    width=500,
-    height=250
-)
-
-
-contenuto.append(
-    immagine
-)
-
-
-contenuto.append(
-    Spacer(
-        1,
-        20
+    contenuto.append(
+        Paragraph(
+            f"{sensore}",
+            styles["Heading3"]
+        )
     )
-)
+
+    contenuto.append(
+        Spacer(
+            1,
+            5
+        )
+    )
+ 
+    immagine = Image(
+        grafico_path,
+        width=500,
+        height=250
+    )
+
+
+    contenuto.append(
+        immagine
+    )
+
+
+    contenuto.append(
+        Spacer(
+            1,
+            20
+        )
+    )
 
 
 # 12) CREAZIONE DELLA TABELLA

@@ -1,5 +1,4 @@
 import json
-import csv
 from datetime import datetime
 
 import matplotlib.pyplot as plt
@@ -16,96 +15,46 @@ from reportlab.platypus import (
     TableStyle
 )
 
-
-
-# 1) LETTURA DEL FILE JSON
-
-
-with open("dati.json", "r", encoding="utf-8") as file:
+# 1) LETTURA DEL FILE JSON DEI SENSORI
+with open("sensor_measurements.json", "r", encoding="utf-8") as file:
     dati_json = json.load(file) 
-                                
 
-titolo = dati_json["titolo"] 
+parametro = dati_json.get("parameter", "temperature")
+unita = dati_json.get("unit", "°C")
+intervallo = dati_json.get("sampling_interval_minutes", 10)
+misurazioni = dati_json.get("measurements", [])
 
-dati = dati_json["dati"]
+titolo = f"Report Misurazioni: {parametro.capitalize()} ({unita})"
 
+# 2) ESTRAZIONE DEI DATI (Timestamp, Sensor 1 e Sensor 2)
+timestamps = [m["timestamp"] for m in misurazioni]
+sensor_1_valori = [m["sensor_1"] for m in misurazioni]
+sensor_2_valori = [m["sensor_2"] for m in misurazioni]
 
-
-# 2) LETTURA DEL FILE CSV
-
-
-mesi = []
-vendite = []
-
-with open("dati.csv", "r", encoding="utf-8") as file:
-    lettore = csv.DictReader(file)
-
-    for riga in lettore:
-        mesi.append(riga["mese"])
-        vendite.append(int(riga["vendite"]))
-
-
-
-# 3) CREAZIONE GRAFICO CSV
-
-
-# Il metodo plt.figure() serve a creare un nuovo oggetto Figure,
-# che rappresenta la finestra principale o il foglio su cui vengono posizionati uno o più grafici
-plt.figure(figsize=(8, 5))
-
-#La funzione plt.bar() in Python serve a creare un diagramma a barre verticali usando la libreria Matplotlib
-plt.bar(
-    mesi,
-    vendite
-)
-
-plt.title("Vendite mensili")
-#plt.xlabel() in Python è una funzione della libreria Matplotlib che serve a impostare il 
-#testo dell'etichetta per l'asse orizzontale (asse x) di un grafico
-plt.xlabel("Mese")
-plt.ylabel("Vendite")
-
-plt.tight_layout()
-#plt.tight_layout() è una funzione utilizzata per ottimizzare automaticamente lo spazio tra i vari elementi di un grafico
-
-grafico_csv = "grafico_vendite.png"
-
-plt.savefig(
-    grafico_csv,
-    dpi=150
-)
-
-
-plt.close()
-
-
-# 4) ESTRAZIONE DEI DATI X E Y DAL JSON
-
-
-x = [elemento["x"] for elemento in dati]
-y = [elemento["y"] for elemento in dati]
-
-
-
-
-# 5. CREAZIONE DEL GRAFICO JSON
-
-
+# 3) CREAZIONE DEL GRAFICO PER I SENSORI
 plt.figure(figsize=(10, 5))
 
 plt.plot(
-    x,
-    y,
-    marker="o"
+    timestamps,
+    sensor_1_valori,
+    marker="o",
+    label="Sensor 1"
 )
-#la funzione plt.plot prende le due liste appena estratte e le usa come coordinate geometriche per tracciare i punti sul grafico
 
-plt.title(titolo)
-plt.xlabel("X")
-plt.ylabel("Y")
-#plt.xlabel("X"), Matplotlib scriverà la lettera "X" sotto l'asse orizzontale
+plt.plot(
+    timestamps,
+    sensor_2_valori,
+    marker="s",
+    label="Sensor 2"
+)
 
-plt.grid(True) #serve a mostrare la griglia di sfondo sul grafico
+plt.title(f"Andamento {parametro} ({unita})")
+plt.xlabel("Timestamp")
+plt.ylabel(f"Valore ({unita})")
+
+plt.xticks(rotation=45, ha="right")
+plt.grid(True)
+plt.legend()
 
 plt.tight_layout()
 
@@ -118,11 +67,7 @@ plt.savefig(
 
 plt.close()
 
-
-
-# 6) CREAZIONE DEL PDF
-
-
+# 4) CREAZIONE DEL PDF
 pdf_path = "report.pdf"
 
 documento = SimpleDocTemplate(
@@ -133,11 +78,7 @@ styles = getSampleStyleSheet()
 
 contenuto = []
 
-
-
 # TITOLO DEL REPORT
-
-
 contenuto.append(
     Paragraph(
         titolo,
@@ -149,18 +90,14 @@ contenuto.append(
     Spacer(1, 20)
 )
 
-
-
-# DATA DI GENERAZIONE
-
-
+# DATA DI GENERAZIONE E INFO
 data_generazione = datetime.now().strftime(
     "%d/%m/%Y %H:%M"
 )
 
 contenuto.append(
     Paragraph(
-        f"Report generato il: {data_generazione}",
+        f"Report generato il: {data_generazione} | Intervallo campionamento: {intervallo} min",
         styles["Normal"]
     )
 )
@@ -169,14 +106,10 @@ contenuto.append(
     Spacer(1, 20)
 )
 
-
-
-# 7. INSERIMENTO DEL GRAFICO JSON
-
-
+# 5. INSERIMENTO DEL GRAFICO NEL PDF
 contenuto.append(
     Paragraph(
-        "Grafico dei dati JSON",
+        "Grafico Misurazioni Sensori",
         styles["Heading2"]
     )
 )
@@ -197,47 +130,15 @@ contenuto.append(
     Spacer(1, 20)
 )
 
+# 6. TABELLA DEI DATI DELLE MISURAZIONI
+tabella_dati = [["Timestamp", "Sensor 1", "Sensor 2"]]
 
-
-# 8. INSERIMENTO DEL GRAFICO CSV
-
-
-contenuto.append(
-    Paragraph(
-        "Grafico delle vendite mensili",
-        styles["Heading2"]
-    )
-)
-
-contenuto.append(
-    Spacer(1, 10)
-)
-
-immagine_csv = Image(
-    grafico_csv,
-    width=500,
-    height=250
-)
-
-contenuto.append(immagine_csv)
-
-contenuto.append(
-    Spacer(1, 20)
-)
-
-
-
-# 9. TABELLA DEI DATI JSON
-
-
-tabella_dati = [["X", "Y"]]
-
-for elemento in dati:
+for m in misurazioni:
     tabella_dati.append([
-        elemento["x"],
-        elemento["y"]
+        m["timestamp"],
+        str(m["sensor_1"]),
+        str(m["sensor_2"])
     ])
-
 
 tabella = Table(tabella_dati)
 
@@ -253,10 +154,7 @@ tabella.setStyle(
 
 contenuto.append(tabella)
 
-
-# 10. GENERAZIONE DEL PDF
-
-
+# 7. GENERAZIONE DEL PDF FINALE
 documento.build(contenuto) 
 
-print(f"Report creato: {pdf_path}")
+print(f"Report creato con successo: {pdf_path}")

@@ -31,6 +31,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--input",
+    type=str,
+    default="sensor_measurements.json",
+    help="Nome del file JSON di input"
+)
+
+parser.add_argument(
     "--data-inizio",
     type=str,
     default=None,
@@ -77,7 +84,7 @@ if data_inizio and data_fine and data_inizio > data_fine:
 # 3) LETTURA DEL FILE JSON DEI SENSORI
 
 with open(
-    "sensor_measurements.json",
+    args.input,
     "r",
     encoding="utf-8"
 ) as file:

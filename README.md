@@ -335,7 +335,7 @@ Il PDF contiene il grafico e una tabella con le misurazioni relative al periodo 
 
 ## Branch Git
 
-Per lo sviluppo del progetto sono stati utilizzati due branch separati, in modo da sviluppare le funzionalità richieste separatamente.
+Per lo sviluppo del progetto sono stati utilizzati quattro branch separati, in modo da sviluppare le funzionalità richieste separatamente.
 
 ### `feature/json-input`
 
@@ -367,6 +367,57 @@ Questi parametri permettono di:
 
 * selezionare il periodo delle misurazioni;
 * scegliere il nome del file PDF generato.
+
+### 'feature/input-parameter'
+
+## Specificare il file di input
+
+Il programma permette di specificare tramite riga di comando il file JSON contenente le misurazioni da elaborare.
+
+Per indicare un file JSON diverso da quello utilizzato come valore predefinito, è possibile utilizzare il parametro:
+
+```bash
+--input
+```
+Per ottenere questo comportamento si aggiunge questo pezzo di codice:
+
+```python
+parser.add_argument(
+    "--input",
+    type=str,
+    default="sensor_measurements.json",
+    help="Nome del file JSON di input"
+)
+```
+E poi sostituire il nome del file predefinito, che era sensor_measurements.json, con args.input
+
+```python
+with open(
+    args.input,
+    "r",
+    encoding="utf-8"
+) as file:
+    dati_json = json.load(file)
+```
+
+Ad esempio:
+
+```bash
+python genera_report.py --input dati.json
+```
+
+È possibile utilizzare il parametro `--input` insieme agli altri parametri disponibili, come `--output`, `--data-inizio` e `--data-fine`.
+
+Esempio:
+
+```bash
+python genera_report.py --input misurazioni.json --output report.pdf --data-inizio 2026-01-01 --data-fine 2026-06-30
+```
+
+In questo modo il programma legge i dati dal file JSON specificato dall'utente, applica eventualmente il filtro relativo al periodo indicato e genera il report PDF con il nome scelto.
+
+Il parametro `--input` rende quindi il programma più flessibile, perché non è più necessario utilizzare sempre lo stesso file JSON presente nella cartella del progetto.
+
 
 ---
 

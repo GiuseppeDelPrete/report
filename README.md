@@ -2,7 +2,7 @@
 
 Applicazione Python per l'elaborazione di misurazioni provenienti da sensori e la generazione automatica di report in formato PDF, corredati da grafici e tabelle.
 
-Il progetto è stato sviluppato utilizzando **Python**, **Matplotlib** e **ReportLab**, con gestione del codice tramite **Git e GitHub**.
+Il progetto è stato sviluppato utilizzando **Python**, **Flask**, **Matplotlib** e **ReportLab**, con gestione del codice tramite **Git e GitHub**.
 
 ## Descrizione
 
@@ -19,9 +19,9 @@ e utilizza le informazioni contenute nel file per:
 1. leggere il parametro misurato;
 2. leggere l'unità di misura;
 3. leggere l'intervallo di campionamento;
-4. leggere le misurazioni dei due sensori;
+4. leggere le misurazioni dei sensori;
 5. filtrare le misurazioni in base al periodo selezionato;
-6. generare un grafico dell'andamento dei sensori;
+6. generare grafici individuali e un grafico comparativo dell'andamento dei sensori;
 7. creare un report PDF;
 8. inserire nel PDF il grafico e una tabella delle misurazioni.
 
@@ -41,19 +41,27 @@ per recuperare i dati relativi alle misurazioni dei sensori.
 
 Il file contiene informazioni sul parametro misurato, sull'unità di misura, sull'intervallo di campionamento e sui valori rilevati dai sensori.
 
-### Generazione del grafico
+### Generazione dei grafici
 
-Il programma utilizza la libreria **Matplotlib** per generare un grafico, nel caso in esame, contenente l'andamento delle misurazioni di:
+Il programma utilizza la libreria **Matplotlib** per rilevare automaticamente i sensori presenti nel file JSON e generare i relativi grafici.
 
-* Sensor 1
-* Sensor 2
-* Sensor 3
+Per ogni sensore viene generato un grafico individuale contenente l'andamento delle misurazioni nel tempo.
 
-Il grafico viene salvato nel file:
+Ad esempio, per tre sensori vengono creati:
 
 ```text
-grafico.png
+grafico_sensor_1.png
+grafico_sensor_2.png
+grafico_sensor_3.png
 ```
+
+Il programma genera inoltre un grafico comparativo contenente l'andamento di tutti i sensori:
+
+```text
+grafico_confronto.png
+```
+
+In questo modo il programma può gestire automaticamente un numero variabile di sensori senza dover modificare il codice.
 
 ### Generazione del report PDF
 
@@ -93,14 +101,13 @@ Il programma utilizza queste date per selezionare le misurazioni comprese nel pe
 
 La struttura principale del progetto è la seguente:
 
-```text
 report/
 │
 ├── genera_report.py
+├── app.py
 ├── sensor_measurements.json
 ├── README.md
 ├── requirements.txt
-```
 
 ### Descrizione dei file
 
@@ -110,7 +117,7 @@ report/
 | `sensor_measurements.json` | File JSON contenente le misurazioni dei sensori                                            |
 | `requirements.txt`         | Elenco delle librerie Python necessarie                                                    |
 | `README.md`                | Documentazione del progetto                                                                |
-
+| `app.py`                   | Applicazione Flask che espone l'endpoint API per la generazione del report |
 ---
 
 ## Requisiti
@@ -121,6 +128,7 @@ Per eseguire il progetto è necessario avere installato:
 * **Matplotlib**
 * **ReportLab**
 * **Git** per la gestione del repository
+* **Flask** per la realizzazione dell'API
 
 ---
 
@@ -140,10 +148,10 @@ Dovrebbe essere visualizzata la versione di Python installata.
 
 ### 2. Installare le librerie necessarie
 
-Installare Matplotlib e ReportLab utilizzando `pip`:
+Installare Matplotlib, Flask e ReportLab utilizzando `pip`:
 
 ```powershell
-pip install matplotlib reportlab
+pip install flask matplotlib reportlab
 ```
 
 È possibile verificare l'installazione con:
@@ -157,6 +165,9 @@ e:
 ```powershell
 pip show reportlab
 ```
+e:
+
+pip show flask
 
 ---
 
@@ -243,6 +254,7 @@ Lo script supporta i seguenti parametri:
 | `--data-inizio` | Data iniziale del periodo da considerare | `--data-inizio 2026-09-01` |
 | `--data-fine`   | Data finale del periodo da considerare   | `--data-fine 2026-09-18`   |
 | `--output`      | Nome del file PDF da generare            | `--output report.pdf`      |
+| `--input`       | Nome del file JSON di input              | `--input sensor_measurements.json` |
 
 ### Formato delle date
 
@@ -334,7 +346,7 @@ Il PDF contiene il grafico e una tabella con le misurazioni relative al periodo 
 
 ## Branch Git
 
-Per lo sviluppo del progetto sono stati utilizzati quattro branch separati, in modo da sviluppare le funzionalità richieste separatamente.
+Per lo sviluppo del progetto sono stati utilizzati cinque branch separati, in modo da sviluppare le funzionalità richieste separatamente.
 
 ### Branch `feature/json-input`
 
@@ -557,6 +569,142 @@ Ad esempio, con tre sensori viene generata una tabella con:
 
 Non è necessario modificare manualmente il codice ogni volta che viene aggiunto un nuovo sensore
 
+
+### Branch - feature/api-endpoint
+
+## API Flask
+
+Il progetto dispone anche di un'API realizzata utilizzando **Flask**.
+
+L'API permette di avviare la generazione del report tramite una richiesta HTTP, senza utilizzare direttamente la riga di comando.
+
+L'applicazione Flask non dispone di un'interfaccia grafica. L'endpoint viene testato tramite **Postman**.
+
+### Avvio dell'API
+
+Per avviare il server Flask bisogna aprire il terminale di Visual Studio Code nella cartella del progetto ed eseguire:
+
+```powershell
+python app.py
+```
+
+Il server viene avviato all'indirizzo:
+
+```text
+http://127.0.0.1:5000
+```
+
+### Endpoint per la generazione del report
+
+L'API espone il seguente endpoint:
+
+```text
+POST /genera-report
+```
+
+L'URL completo da utilizzare in Postman è:
+
+```text
+http://127.0.0.1:5000/genera-report
+```
+
+L'endpoint utilizza il metodo HTTP `POST` perché deve ricevere i parametri necessari alla generazione del report.
+
+### Parametri dell'endpoint
+
+I parametri vengono inviati nel **Body** della richiesta in formato JSON.
+
+Esempio:
+
+```json
+{
+    "input": "sensor_measurements.json",
+    "output": "report.pdf",
+    "data_inizio": "2026-09-18",
+    "data_fine": "2026-09-18"
+}
+```
+
+I parametri utilizzati sono:
+
+| Parametro     | Descrizione                                  | Esempio                    |
+| ------------- | -------------------------------------------- | -------------------------- |
+| `input`       | Nome del file JSON contenente le misurazioni | `sensor_measurements.json` |
+| `output`      | Nome del file PDF da generare                | `report.pdf`               |
+| `data_inizio` | Data iniziale del periodo da considerare     | `2026-09-18`               |
+| `data_fine`   | Data finale del periodo da considerare       | `2026-09-18`               |
+
+I valori ricevuti dall'endpoint vengono passati alla funzione `genera_report()` presente nel file `genera_report.py`.
+
+### Test tramite Postman
+
+Per testare l'endpoint è possibile utilizzare Postman.
+
+Configurare una nuova richiesta nel seguente modo:
+
+**Metodo:**
+
+```text
+POST
+```
+
+**URL:**
+
+```text
+http://127.0.0.1:5000/genera-report
+```
+
+**Body:**
+
+selezionare `raw` e successivamente `JSON`.
+
+Inserire:
+
+```json
+{
+    "input": "sensor_measurements.json",
+    "output": "report.pdf",
+    "data_inizio": "2026-09-18",
+    "data_fine": "2026-09-18"
+}
+```
+
+Premendo **Send**, Flask riceve la richiesta e avvia la funzione `genera_report()`.
+
+Se la generazione termina correttamente, l'API restituisce una risposta JSON simile a:
+
+```json
+{
+    "message": "Report generato con successo",
+    "file": "report.pdf"
+}
+```
+
+Il file PDF viene quindi generato nella cartella del progetto.
+
+### Separazione tra script e API
+
+La funzione principale per la generazione del report è stata inserita nella funzione:
+
+```python
+genera_report(
+    input_file,
+    output_file,
+    data_inizio_str,
+    data_fine_str
+)
+```
+
+In questo modo la stessa funzione può essere utilizzata sia dallo script eseguito tramite riga di comando sia dall'API Flask.
+
+L'utilizzo di:
+
+```python
+if __name__ == "__main__":
+```
+
+permette di mantenere separata l'esecuzione tramite `argparse` dall'utilizzo della funzione da parte di `app.py`.
+
 ---
 
 ## Comandi Git utilizzati
@@ -661,5 +809,7 @@ Il progetto utilizza le seguenti tecnologie:
 * **ReportLab** — libreria utilizzata per la generazione dei documenti PDF;
 * **Git** — sistema di controllo versione;
 * **GitHub** — piattaforma utilizzata per il repository remoto.
+* **Flask** — framework utilizzato per realizzare l'API HTTP;
+* **Postman** — strumento utilizzato per testare l'endpoint API.
 
 ---

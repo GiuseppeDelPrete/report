@@ -6,7 +6,7 @@ Il progetto è stato sviluppato utilizzando **Python**, **Matplotlib** e **Repor
 
 ## Descrizione
 
-Il progetto permette di elaborare le misurazioni provenienti da due sensori e di generare automaticamente un report in formato PDF.
+Il progetto permette di elaborare le misurazioni provenienti da un numero variabile di sensori e di generare automaticamente un report in formato PDF.
 
 Il programma legge i dati dal file:
 
@@ -43,10 +43,11 @@ Il file contiene informazioni sul parametro misurato, sull'unità di misura, sul
 
 ### Generazione del grafico
 
-Il programma utilizza la libreria **Matplotlib** per generare un grafico contenente l'andamento delle misurazioni di:
+Il programma utilizza la libreria **Matplotlib** per generare un grafico, nel caso in esame, contenente l'andamento delle misurazioni di:
 
 * Sensor 1
 * Sensor 2
+* Sensor 3
 
 Il grafico viene salvato nel file:
 
@@ -99,8 +100,6 @@ report/
 ├── sensor_measurements.json
 ├── README.md
 ├── requirements.txt
-├── grafico.png
-└── report.pdf
 ```
 
 ### Descrizione dei file
@@ -109,8 +108,6 @@ report/
 | -------------------------- | ------------------------------------------------------------------------------------------ |
 | `genera_report.py`         | Script principale che legge i dati, filtra le misurazioni, genera il grafico e crea il PDF |
 | `sensor_measurements.json` | File JSON contenente le misurazioni dei sensori                                            |
-| `grafico.png`              | Grafico generato automaticamente dallo script                                              |
-| `report.pdf`               | Report PDF generato automaticamente dallo script                                           |
 | `requirements.txt`         | Elenco delle librerie Python necessarie                                                    |
 | `README.md`                | Documentazione del progetto                                                                |
 
@@ -337,7 +334,7 @@ Il PDF contiene il grafico e una tabella con le misurazioni relative al periodo 
 
 Per lo sviluppo del progetto sono stati utilizzati quattro branch separati, in modo da sviluppare le funzionalità richieste separatamente.
 
-### `feature/json-input`
+### Branch `feature/json-input`
 
 Questo branch è stato utilizzato per la funzionalità relativa al nuovo file JSON.
 
@@ -351,7 +348,7 @@ come file contenente le misurazioni dei sensori.
 
 ---
 
-### `feature/parameters-config`
+### Branch `feature/parameters-config`
 
 Questo branch è stato utilizzato per aggiungere la gestione dei parametri da riga di comando.
 
@@ -368,9 +365,9 @@ Questi parametri permettono di:
 * selezionare il periodo delle misurazioni;
 * scegliere il nome del file PDF generato.
 
-### 'feature/input-parameter'
+### Branch 'feature/input-parameter'
 
-## Specificare il file di input
+#### Specificare il file di input
 
 Il programma permette di specificare tramite riga di comando il file JSON contenente le misurazioni da elaborare.
 
@@ -418,115 +415,7 @@ In questo modo il programma legge i dati dal file JSON specificato dall'utente, 
 
 Il parametro `--input` rende quindi il programma più flessibile, perché non è più necessario utilizzare sempre lo stesso file JSON presente nella cartella del progetto.
 
-
----
-
-## Comandi Git utilizzati
-
-### Inizializzazione del repository
-
-```powershell
-git init
-```
-
-### Verifica dello stato del repository
-
-```powershell
-git status
-```
-
-### Aggiunta dei file
-
-Per aggiungere un file specifico:
-
-```powershell
-git add genera_report.py
-```
-
-Per aggiungere più file:
-
-```powershell
-git add grafico.png report.pdf
-```
-
-### Creazione del commit
-
-```powershell
-git commit -m "Messaggio del commit"
-```
-
-### Collegamento al repository GitHub
-
-```powershell
-git remote add origin https://github.com/GiuseppeDelPrete/report
-```
-
-### Verifica del repository remoto
-
-```powershell
-git remote -v
-```
-
-### Creazione del branch JSON
-
-```powershell
-git checkout -b feature/json-input
-```
-
-### Creazione del branch dei parametri
-
-```powershell
-git checkout -b feature/parameters-config
-```
-
-### Visualizzazione dei branch
-
-```powershell
-git branch
-```
-
-### Passaggio a un branch
-
-Per passare al branch JSON:
-
-```powershell
-git checkout feature/json-input
-```
-
-Per passare al branch dei parametri:
-
-```powershell
-git checkout feature/parameters-config
-```
-
-### Caricamento delle modifiche su GitHub
-
-```powershell
-git push
-```
-
-Per il primo caricamento di un nuovo branch può essere utilizzato:
-
-```powershell
-git push -u origin feature/parameters-config
-```
-
----
-
-## Tecnologie utilizzate
-
-Il progetto utilizza le seguenti tecnologie:
-
-* **Python** — linguaggio di programmazione utilizzato per lo sviluppo dello script;
-* **JSON** — formato utilizzato per memorizzare le misurazioni;
-* **Matplotlib** — libreria utilizzata per la generazione dei grafici;
-* **ReportLab** — libreria utilizzata per la generazione dei documenti PDF;
-* **Git** — sistema di controllo versione;
-* **GitHub** — piattaforma utilizzata per il repository remoto.
-
----
-
-*** Branch - multi-sensori-grafici ***
+### Branch - multi-sensori-grafici 
 Obiettivi del branch
 
 1. Supporto a più di due sensori
@@ -536,7 +425,7 @@ Obiettivi del branch
 ***Generare un grafico per ogni sensore e mantenere il grafico di confronto già esistente alla fine del report***
 
 --- 
-###
+
 ## Rilevamento dei sensori
 
 I sensori vengono individuati automaticamente analizzando le chiavi presenti nella prima misurazione.
@@ -665,3 +554,110 @@ Ad esempio, con tre sensori viene generata una tabella con:
 `Timestamp | sensor_1 | sensor_2 | sensor_3 `
 
 Non è necessario modificare manualmente il codice ogni volta che viene aggiunto un nuovo sensore
+
+---
+
+## Comandi Git utilizzati
+
+### Inizializzazione del repository
+
+```powershell
+git init
+```
+
+### Verifica dello stato del repository
+
+```powershell
+git status
+```
+
+### Aggiunta dei file
+
+Per aggiungere un file specifico:
+
+```powershell
+git add genera_report.py
+```
+
+Per aggiungere più file:
+
+```powershell
+git add grafico.png report.pdf
+```
+
+### Creazione del commit
+
+```powershell
+git commit -m "Messaggio del commit"
+```
+
+### Collegamento al repository GitHub
+
+```powershell
+git remote add origin https://github.com/GiuseppeDelPrete/report
+```
+
+### Verifica del repository remoto
+
+```powershell
+git remote -v
+```
+
+### Creazione del branch JSON
+
+```powershell
+git checkout -b feature/json-input
+```
+
+### Creazione del branch dei parametri
+
+```powershell
+git checkout -b feature/parameters-config
+```
+
+### Visualizzazione dei branch
+
+```powershell
+git branch
+```
+
+### Passaggio a un branch
+
+Per passare al branch JSON:
+
+```powershell
+git checkout feature/json-input
+```
+
+Per passare al branch dei parametri:
+
+```powershell
+git checkout feature/parameters-config
+```
+
+### Caricamento delle modifiche su GitHub
+
+```powershell
+git push
+```
+
+Per il primo caricamento di un nuovo branch può essere utilizzato:
+
+```powershell
+git push -u origin feature/parameters-config
+```
+
+---
+
+## Tecnologie utilizzate
+
+Il progetto utilizza le seguenti tecnologie:
+
+* **Python** — linguaggio di programmazione utilizzato per lo sviluppo dello script;
+* **JSON** — formato utilizzato per memorizzare le misurazioni;
+* **Matplotlib** — libreria utilizzata per la generazione dei grafici;
+* **ReportLab** — libreria utilizzata per la generazione dei documenti PDF;
+* **Git** — sistema di controllo versione;
+* **GitHub** — piattaforma utilizzata per il repository remoto.
+
+---

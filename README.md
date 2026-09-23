@@ -276,8 +276,9 @@ La struttura del file è basata sulle seguenti informazioni:
     "measurements": [
         {
             "timestamp": "2026-09-01T10:00:00Z",
-            "sensor_1": 24.5,
-            "sensor_2": 25.1
+            "sensor_1": 22.0,
+            "sensor_2": 21.1,
+            "sensor_3": 25.1
         }
     ]
 }
@@ -299,6 +300,7 @@ Ogni elemento della lista `measurements` contiene:
 | `timestamp` | Data e ora della misurazione        |
 | `sensor_1`  | Valore rilevato dal primo sensore   |
 | `sensor_2`  | Valore rilevato dal secondo sensore |
+| `sensor_3`  | Valore rilevato dal terzo sensore   |
 
 ---
 

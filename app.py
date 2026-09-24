@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, send_file
 from genera_report import genera_report
 
 app = Flask(__name__)
 
 
-@app.route("/genera-report", methods=["POST"])
+@app.route("/genera-report", methods=["POST"]) #creazione endpoint
 def genera_report_endpoint():
 
     dati = request.get_json()
@@ -21,10 +21,10 @@ def genera_report_endpoint():
         data_fine
     )
 
-    return jsonify({
-        "message": "Report generato con successo",
-        "file": output_file
-    })
+    return send_file(
+        output_file,
+        as_attachment=True
+    )
 
 
 if __name__ == "__main__":

@@ -638,6 +638,8 @@ I valori ricevuti dall'endpoint vengono passati alla funzione `genera_report()` 
 
 ### Test tramite Postman
 
+**### Test tramite Postman**
+
 Per testare l'endpoint è possibile utilizzare Postman.
 
 Configurare una nuova richiesta nel seguente modo:
@@ -671,16 +673,49 @@ Inserire:
 
 Premendo **Send**, Flask riceve la richiesta e avvia la funzione `genera_report()`.
 
-Se la generazione termina correttamente, l'API restituisce una risposta JSON simile a:
+Se la generazione termina correttamente, l'API restituisce direttamente il file PDF generato come risposta HTTP.
+
+Il report è quindi disponibile nella risposta di Postman e può essere salvato o scaricato.
+
+Il file PDF viene inoltre generato nella cartella del progetto con il nome specificato nel parametro `output`.
+
+Ad esempio, utilizzando:
 
 ```json
-{
-    "message": "Report generato con successo",
-    "file": "report.pdf"
-}
+"output": "report.pdf"
 ```
 
-Il file PDF viene quindi generato nella cartella del progetto.
+viene generato il file:
+
+```text
+report.pdf
+```
+
+**### Risposta dell'endpoint**
+
+L'endpoint `/genera-report` restituisce il report PDF direttamente al client tramite la funzione Flask `send_file()`.
+
+In questo modo il comportamento dell'API è il seguente:
+
+```text
+Postman
+    ↓
+HTTP POST + JSON
+    ↓
+Flask
+    ↓
+genera_report()
+    ↓
+generazione del PDF
+    ↓
+send_file()
+    ↓
+PDF restituito nella risposta HTTP
+    ↓
+Postman
+```
+
+Il client non riceve quindi solamente un messaggio di conferma in formato JSON, ma riceve direttamente il file PDF generato, pronto per essere salvato o scaricato.
 
 ### Separazione tra script e API
 

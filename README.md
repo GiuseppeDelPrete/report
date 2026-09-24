@@ -101,13 +101,14 @@ Il programma utilizza queste date per selezionare le misurazioni comprese nel pe
 
 La struttura principale del progetto è la seguente:
 
+```text
 report/
 │
 ├── genera_report.py
 ├── app.py
 ├── sensor_measurements.json
 ├── README.md
-├── requirements.txt
+└── requirements.txt
 
 ### Descrizione dei file
 
@@ -167,7 +168,9 @@ pip show reportlab
 ```
 e:
 
+```powershell
 pip show flask
+```
 
 ---
 

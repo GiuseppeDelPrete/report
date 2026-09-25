@@ -107,18 +107,20 @@ report/
 ├── genera_report.py
 ├── app.py
 ├── sensor_measurements.json
+├── Dockerfile
 ├── README.md
 └── requirements.txt
 
 ### Descrizione dei file
 
-| File                       | Descrizione                                                                                |
-| -------------------------- | ------------------------------------------------------------------------------------------ |
-| `genera_report.py`         | Script principale che legge i dati, filtra le misurazioni, genera il grafico e crea il PDF |
-| `sensor_measurements.json` | File JSON contenente le misurazioni dei sensori                                            |
-| `requirements.txt`         | Elenco delle librerie Python necessarie                                                    |
-| `README.md`                | Documentazione del progetto                                                                |
-| `app.py`                   | Applicazione Flask che espone l'endpoint API per la generazione del report |
+| File                        | Descrizione                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------ |
+| `genera_report.py`          | Script principale che legge i dati, filtra le misurazioni, genera i grafici e crea il PDF |
+| `sensor_measurements.json`  | File JSON contenente le misurazioni dei sensori                                            |
+| `requirements.txt`          | Elenco delle librerie Python necessarie                                                    |
+| `README.md`                 | Documentazione del progetto                                                                |
+| `app.py`                    | Applicazione Flask che espone l'endpoint API per la generazione del report                |
+| `Dockerfile`                | File contenente le istruzioni per creare l'immagine Docker dell'applicazione              |
 ---
 
 ## Requisiti
@@ -745,6 +747,71 @@ permette di mantenere separata l'esecuzione tramite `argparse` dall'utilizzo del
 
 ---
 
+## Esecuzione con Docker
+
+Il progetto può essere eseguito all'interno di un container Docker. Il `Dockerfile` contiene le istruzioni necessarie per creare l'immagine Docker con Python, le dipendenze e tutti i file del progetto.
+
+### Modifica di `app.py`
+
+Per permettere al server Flask di essere raggiungibile dall'esterno del container, è stato necessario modificare il metodo `app.run()` nel file `app.py`.
+
+La configurazione utilizzata è:
+
+```python
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+```
+
+L'indirizzo `0.0.0.0` permette a Flask di ascoltare le connessioni su tutte le interfacce di rete del container. In questo modo Docker può inoltrare le richieste ricevute sulla porta `5000` del computer alla porta `5000` del container.
+
+### Creazione dell'immagine Docker
+
+Dalla cartella principale del progetto, dove si trova il file `Dockerfile`, eseguire:
+
+```bash
+docker build -t report-app .
+```
+
+Il comando crea un'immagine Docker chiamata `report-app`.
+
+### Creazione e avvio del container
+
+Dopo aver creato l'immagine, è possibile creare e avviare il container con:
+
+```bash
+docker run --name report-container -p 5000:5000 report-app
+```
+
+Il comando:
+
+* `--name report-container` assegna il nome `report-container` al container;
+* `-p 5000:5000` collega la porta 5000 del computer alla porta 5000 del container;
+* `report-app` indica l'immagine Docker da utilizzare.
+
+L'applicazione Flask viene avviata automaticamente dal container tramite il comando definito nel `Dockerfile`.
+
+### Test dell'API
+
+Una volta avviato il container, l'API è disponibile all'indirizzo:
+
+```text
+http://localhost:5000/genera-report
+```
+
+È possibile testare l'endpoint tramite Postman utilizzando una richiesta `POST` con il seguente JSON:
+
+```json
+{
+    "input": "sensor_measurements.json",
+    "output": "report.pdf",
+    "data_inizio": "2026-09-18",
+    "data_fine": "2026-09-18"
+}
+```
+
+Il server Flask riceve i dati tramite l'API, genera il report PDF e lo restituisce al client tramite `send_file()`.
+
+
 ## Comandi Git utilizzati
 
 ### Inizializzazione del repository
@@ -849,5 +916,6 @@ Il progetto utilizza le seguenti tecnologie:
 * **GitHub** — piattaforma utilizzata per il repository remoto.
 * **Flask** — framework utilizzato per realizzare l'API HTTP;
 * **Postman** — strumento utilizzato per testare l'endpoint API.
+* **Docker** - piattaforma che ha permesso la creazione ed eseguire l'applicazione all'interno del container
 
 ---

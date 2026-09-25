@@ -132,6 +132,7 @@ Per eseguire il progetto è necessario avere installato:
 * **ReportLab**
 * **Git** per la gestione del repository
 * **Flask** per la realizzazione dell'API
+* **Docker Desktop** se si desidera eseguire il progetto tramite Docker
 
 ---
 
